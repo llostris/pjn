@@ -11,8 +11,10 @@ class NGramFinder:
     def __init__(self, n):
         self.n = n
         self.interpuction_regexp = r"[\.:;,!\?\"]"
+        # if interpunction_regexp is not None:
+        #     self.interpuction_regexp = interpunction_regexp
 
-    def get_ngrams(self, corpus):
+    def get_ngrams(self, corpus, spaces=False):
         corpus = re.sub(self.interpuction_regexp, "", corpus)
         words = corpus.split()
         ngrams = {}
@@ -23,6 +25,20 @@ class NGramFinder:
                     ngrams[gram] += 1
                 else:
                     ngrams[gram] = 1
+        if spaces:
+            for word in words:
+                for length in range(1, self.n - 1):
+                    gram = "_" * (self.n - length) + word[:length]
+                    if gram in ngrams:
+                        ngrams[gram] += 1
+                    else:
+                        ngrams[gram] = 1
+                    gram = word[-length:]+ "_" * (self.n - length)
+                    if gram in ngrams:
+                        ngrams[gram] += 1
+                    else:
+                        ngrams[gram] = 1
+
         return ngrams
 
     def get_word_1grams(self, corpus):
